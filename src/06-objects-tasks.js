@@ -19,16 +19,12 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-class CoolerRectangle {
-  constructor(width1, height1) {
-    this.width = width1;
-    this.height = height1;
-  }
-
-  getArea() {
-    return this.width * this.height;
-  }
+function CoolerRectangle(width, height) {
+  this.width = width;
+  this.height = height;
+  this.getArea = () => this.width * this.height;
 }
+
 function Rectangle(width, height) {
   return new CoolerRectangle(width, height);
 }
@@ -118,33 +114,133 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
+class CssSelector {
+  constructor() {
+    this.parts = {
+      element: '',
+      id: '',
+      class: [],
+      attr: [],
+      pseudoClass: [],
+      pseudoElement: '',
+    };
+    this.order = [];
+    this.currentOrder = 0;
+  }
+
+  checkOrder(partOrder) {
+    if (this.currentOrder > partOrder) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    this.currentOrder = partOrder;
+  }
+
+  element(value) {
+    this.checkOrder(1);
+    if (this.parts.element) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    this.parts.element = value;
+    return this;
+  }
+
+  id(value) {
+    this.checkOrder(2);
+    if (this.parts.id) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    this.parts.id = `#${value}`;
+    return this;
+  }
+
+  class(value) {
+    this.checkOrder(3);
+    this.parts.class.push(`.${value}`);
+    return this;
+  }
+
+  attr(value) {
+    this.checkOrder(4);
+    this.parts.attr.push(`[${value}]`);
+    return this;
+  }
+
+  pseudoClass(value) {
+    this.checkOrder(5);
+    this.parts.pseudoClass.push(`:${value}`);
+    return this;
+  }
+
+  pseudoElement(value) {
+    this.checkOrder(6);
+    if (this.parts.pseudoElement) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+      /*
+      Полчаса этот ряженный меня мусолил за строку ошибки ПОЛЧАСА ПРИ ТОМ ЧТО В НЕЙ НИЧЕГО НЕ
+      ПОМЕНЯЛОСЬ. Я копировал её из файла, менял кодировки, отдавал гугл переводчику, снова
+      копировал из теста, снова он мне её браковал и главное только эти 3 однотипные строки.
+      Ошибку о неправильном определении он съел, и даже не подовился, но именно с этими
+      тремя мы с этим тестом танцевали хороводы, искали тайные смыслы в одних и тех же буквах
+      и пинговали летающие тарелки. Но видимо только после того как в пандемониуме закончились
+      демоны для призива, а пинг аккаунта бога для восхваений добавил меня в спам
+      вновь СКОПИРОВАННАЯ ИЗ ТОГО ЖЕ САМОГО ТЕСТА строка, прошла успешно, и даже во всех трёх местах
+      По этому на этот раз ошибку выдам я сам:
+
+      1) 06-objects-tasks
+      cssSelectorBuilder should creates css selector object with stringify() method:
+      AssertionError [ERR_ASSERTION]: Please throw an exception "Element, id and pseudo-element
+      should not occur more then one time inside the selector" if element, id or pseudo-element
+      occurs twice or more times
+      at ~/Git/mitso-core-js/test/06-objects-tests.js:262:16
+      at Array.forEach (<anonymous>)
+      at Context.<anonymous> (test/06-objects-tests.js:261:9)
+      at Context.test (extensions/it-optional.js:17:14)
+      at process.processImmediate (node:internal/timers:511:21)
+      */
+    }
+    this.parts.pseudoElement = `::${value}`;
+    return this;
+  }
+
+  stringify() {
+    return this.parts.element + this.parts.id + this.parts.class.join('') + this.parts.attr.join('') + this.parts.pseudoClass.join('') + this.parts.pseudoElement;
+  }
+}
+
+function CombinedCssSelector(selector11, combinator1, selector21) {
+  this.selector1 = selector11;
+  this.combinator = combinator1;
+  this.selector2 = selector21;
+  this.stringify = () => `${this.selector1.stringify()} ${this.combinator} ${this.selector2.stringify()}`;
+}
+
 const cssSelectorBuilder = {
   element(value) {
-    
+    return new CssSelector().element(value);
   },
 
   id(value) {
-    
+    return new CssSelector().id(value);
   },
 
   class(value) {
-    
+    return new CssSelector().class(value);
   },
 
   attr(value) {
-    
+    return new CssSelector().attr(value);
   },
 
   pseudoClass(value) {
-    
+    return new CssSelector().pseudoClass(value);
   },
 
   pseudoElement(value) {
-    
+    return new CssSelector().pseudoElement(value);
   },
 
   combine(selector1, combinator, selector2) {
-    
+    return new CombinedCssSelector(selector1, combinator, selector2);
   },
 };
 
