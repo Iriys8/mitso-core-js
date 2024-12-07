@@ -75,8 +75,12 @@ function getRegexForPitSpot() {
  *   'PASSW0RD'.match(validator)  => false
  *   'Pa55'.match(validator) => false
  */
-function getPasswordValidator(/* minLength */) {
-  throw new Error('Not implemented');
+function getPasswordValidator(minLength) {
+  return new RegExp(`^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*__)[A-Za-z\\d_]{${minLength},}$`);
+  /*
+  ааааАААААААааАааАаАААааа ЭТА ГАДИНА ДАЖЕ НЕ ДАЁТ МНЕ ИЗЛИВАТЬ ДУШУ В КОМЕНТАХ
+  Pa__W0rd НЕБЫЛО В ПРИМЕРЕ!!! ПОЧЕМУ ОНО ЕСТЬ В ТЕСТЕ??????
+  */
 }
 
 module.exports = {
