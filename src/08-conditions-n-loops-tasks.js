@@ -355,8 +355,25 @@ function getDigitalRoot(num) { // WTF????
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const stack = [];
+  const brackets = {
+    '(': ')',
+    '{': '}',
+    '[': ']',
+    '<': '>',
+  };
+  for (let i = 0; i < str.length; i += 1) {
+    const char = str[i];
+    if (brackets[char]) {
+      stack.push(char);
+    } else if (Object.values(brackets).includes(char)) {
+      if (brackets[stack.pop()] !== char) {
+        return false;
+      }
+    }
+  }
+  return stack.length === 0;
 }
 
 /**
@@ -379,8 +396,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) { // ???????
+  return num.toString(n);
 }
 
 /**
@@ -395,8 +412,20 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const splitPaths = pathes.map((path) => path.split('/'));
+  const minLength = Math.min(...splitPaths.map((part) => part.length));
+  let commonPrefix = '';
+  for (let i = 0; i < minLength; i += 1) {
+    const currentPart = splitPaths[0][i];
+    if (splitPaths.every((part) => part[i] === currentPart)) {
+      commonPrefix += currentPart;
+      commonPrefix += '/';
+    } else {
+      break;
+    }
+  }
+  return commonPrefix;
 }
 
 /**
@@ -417,8 +446,19 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const rowsm1 = m1.length;
+  const colsm1 = m1[0].length;
+  const colsm2 = m2[0].length;
+  const result = Array.from({ length: rowsm1 }, () => Array(colsm2).fill(0));
+  for (let i = 0; i < rowsm1; i += 1) {
+    for (let j = 0; j < colsm2; j += 1) {
+      for (let k = 0; k < colsm1; k += 1) {
+        result[i][j] += m1[i][k] * m2[k][j];
+      }
+    }
+  }
+  return result;
 }
 
 /**
@@ -451,8 +491,27 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  // МОЙ КУРСАЧ MOMENT?????????????? HOHOHO IT'S TIME CODE
+  const lines = [
+    [position[0][0], position[0][1], position[0][2]],
+    [position[1][0], position[1][1], position[1][2]],
+    [position[2][0], position[2][1], position[2][2]],
+
+    [position[0][0], position[1][0], position[2][0]],
+    [position[0][1], position[1][1], position[2][1]],
+    [position[0][2], position[1][2], position[2][2]],
+
+    [position[0][0], position[1][1], position[2][2]],
+    [position[0][2], position[1][1], position[2][0]],
+  ];
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line[0] && line[0] === line[1] && line[1] === line[2]) {
+      return line[0];
+    }
+  }
+  return undefined;
 }
 
 module.exports = {
