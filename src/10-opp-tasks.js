@@ -24,37 +24,49 @@
 class PaginationHelper {
   // The constructor takes in an array of items and a integer indicating how many
   // items fit within a single page
-  constructor(/* collection, itemsPerPage */) {
-    throw new Error('Not implemented');
+  constructor(collection, itemsPerPage) {
+    this.collection = collection;
+    this.itemsPerPage = itemsPerPage;
   }
 
   // returns the number of items within the entire collection
   itemCount() {
-    console.log(this);
-    throw new Error('Not implemented');
+    return this.collection.length;
   }
 
   // returns the number of pages
   pageCount() {
-    console.log(this);
-    throw new Error('Not implemented');
+    return Math.ceil(this.collection.length / this.itemsPerPage);
   }
 
   // returns the number of items on the current page. page_index is zero based.
   // this method should return -1 for pageIndex values that are out of range
-  pageItemCount() {
-    console.log(this);
-    throw new Error('Not implemented');
+  pageItemCount(ind) {
+    if (ind < 0 || ind >= this.pageCount()) {
+      return -1;
+    }
+    if (ind === this.pageCount() - 1) {
+      return this.collection.length % this.itemsPerPage || this.itemsPerPage;
+    }
+    return this.itemsPerPage;
   }
 
   // determines what page an item is on. Zero based indexes
   // this method should return -1 for itemIndex values that are out of range
-  pageIndex() {
-    console.log(this);
-    throw new Error('Not implemented');
+  pageIndex(ind) {
+    if (ind < 0 || ind >= this.itemCount()) {
+      return -1;
+    }
+    return Math.floor(ind / this.itemsPerPage);
   }
 }
-
+/*
+  Так погоди, тобиж финальный босс который мне выдавал 4 предпреждения каждый раз
+  прогоняя тест раньше, оказался просто классом с парой методов и даже без трекинга
+  ошибок, упротых закавырок и интуитивно понятным интерфейсом? Ну ничего себе, с момента
+  финалла 06 сложность заданий начала свою инфляцию почти как в Германии после первой мировой,
+  какая прелесть.
+*/
 module.exports = {
   PaginationHelper,
 };
